@@ -2,8 +2,8 @@
   "nome": "Bebidas Exemplo",
   "recebedor": "BEBIDAS EXEMPLO LTDA",
   "cidade": "SAO PAULO",
-  "chave": "11.222.333/0001-81",
-  "tipoChave": "cnpj",
+  "chave": "pix@example.com",
+  "tipoChave": "email",
   "corPrincipal": "#D7141A",
   "nomeNoBanco": "Bebidas Exemplo Ltda"
 }
