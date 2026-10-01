@@ -1,0 +1,9 @@
+{
+  "nome": "Café Exemplo",
+  "recebedor": "CAFE EXEMPLO LTDA",
+  "cidade": "SAO PAULO",
+  "chave": "123e4567-e12b-12d1-a456-426655440000",
+  "tipoChave": "aleatoria",
+  "corPrincipal": "#F2C200",
+  "nomeNoBanco": "Café Exemplo Ltda"
+}

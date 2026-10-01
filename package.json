@@ -1,0 +1,11 @@
+{
+  "name": "pixp",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "dependencies": {
+    "qrcode": "^1.5.4"
+  }
+}

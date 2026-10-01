@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="{{fundo}}">
+<title>Pix | {{nome}}</title>
+<link rel="icon" href="data:,">
+<style>
+  :root {
+    --fundo: {{fundo}};
+    --papel: {{papel}};
+    --linha: {{linha}};
+    --texto: {{texto}};
+    --suave: {{suave}};
+    --principal: {{principal}};
+    --borda: {{borda}};
+    --texto-botao: {{textoBotao}};
+    --tinta: {{tinta}};
+    --detalhe: {{detalhe}};
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--fundo);
+    color: var(--texto);
+    font: 17px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  main { max-width: 420px; margin: 0 auto; padding: 48px 24px 56px; }
+  header { text-align: center; margin-bottom: 36px; }
+  .logo { display: block; max-width: 200px; max-height: 88px; margin: 0 auto 16px; }
+  h1 { margin: 0; font-size: 26px; line-height: 1.2; font-weight: 700; letter-spacing: -0.015em; text-wrap: balance; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  button:focus-visible { outline: 3px solid var(--texto); outline-offset: 3px; }
+  #copiar {
+    display: block;
+    width: 100%;
+    min-height: 62px;
+    padding: 8px 16px;
+    border: 2px solid var(--borda);
+    border-radius: 14px;
+    background: var(--principal);
+    color: var(--texto-botao);
+    font-size: 18px;
+    font-weight: 650;
+    line-height: 1.2;
+    text-wrap: balance;
+    transition: transform 120ms ease, background-color 160ms ease, color 160ms ease;
+  }
+  #copiar:active { transform: scale(0.98); }
+  #copiar.ok { background: var(--papel); color: var(--tinta); font-size: 16px; }
+  .valor { margin: 14px 0 0; font-size: 15px; color: var(--suave); text-align: center; }
+  .chave {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    column-gap: 16px;
+    width: 100%;
+    margin: 36px 0 0;
+    padding: 16px 0;
+    border: 0;
+    border-top: 1px solid var(--linha);
+    border-bottom: 1px solid var(--linha);
+    background: none;
+    text-align: left;
+  }
+  .chave .rotulo { grid-column: 1; font-size: 14px; color: var(--suave); }
+  .chave strong {
+    grid-column: 1;
+    font-size: 19px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+  }
+  .chave .acao { grid-column: 2; grid-row: 1 / span 2; font-size: 15px; font-weight: 600; color: var(--detalhe); }
+  .confira { margin: 12px 0 0; font-size: 15px; color: var(--suave); }
+  .confira b { color: var(--texto); font-weight: 600; }
+  figure { margin: 44px auto 0; max-width: 200px; text-align: center; }
+  .qr { background: var(--papel); border: 1px solid var(--linha); border-radius: 12px; overflow: hidden; }
+  .qr svg { display: block; width: 100%; height: auto; }
+  figcaption { margin-top: 10px; font-size: 14px; color: var(--suave); }
+  @media (prefers-reduced-motion: reduce) { #copiar { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <img class="logo" src="{{logo}}" alt="">
+    <h1>{{nome}}</h1>
+  </header>
+  <button type="button" id="copiar" data-copia="{{payload}}">Copiar código Pix</button>
+  <p class="valor">Você digita o valor no app do banco.</p>
+  <button type="button" class="chave" id="chave" data-copia="{{chaveCopia}}">
+    <span class="rotulo">{{chaveRotulo}}</span>
+    <strong>{{chaveExibicao}}</strong>
+    <span class="acao">Copiar</span>
+  </button>
+  <p class="confira">No app, confira se aparece <b>{{nomeNoBanco}}</b>.</p>
+  <figure>
+    <div class="qr">{{qr}}</div>
+    <figcaption>Para pagar de outro aparelho</figcaption>
+  </figure>
+</main>
+<script>
+  function copiarAntigo(texto) {
+    var campo = document.createElement('textarea');
+    campo.value = texto;
+    campo.setAttribute('readonly', '');
+    campo.style.position = 'fixed';
+    campo.style.opacity = '0';
+    document.body.appendChild(campo);
+    campo.select();
+    var ok = document.execCommand('copy');
+    document.body.removeChild(campo);
+    return ok;
+  }
+  function copiar(texto, feito) {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(texto).then(feito, function () { if (copiarAntigo(texto)) feito(); });
+    } else if (copiarAntigo(texto)) {
+      feito();
+    }
+  }
+  function aoCopiar(botao, alvo, texto, classe) {
+    var original = alvo.textContent;
+    var timer;
+    botao.addEventListener('click', function () {
+      copiar(botao.dataset.copia, function () {
+        alvo.textContent = texto;
+        if (classe) botao.classList.add(classe);
+        clearTimeout(timer);
+        timer = setTimeout(function () {
+          alvo.textContent = original;
+          if (classe) botao.classList.remove(classe);
+        }, 3000);
+      });
+    });
+  }
+  var botao = document.getElementById('copiar');
+  var chave = document.getElementById('chave');
+  aoCopiar(botao, botao, 'Copiado — agora cole no app do banco', 'ok');
+  aoCopiar(chave, chave.querySelector('.rotulo'), 'Chave copiada');
+</script>
+</body>
+</html>
